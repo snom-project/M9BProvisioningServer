@@ -1,0 +1,13 @@
+/usr/src/app/log/*.log
+{
+	rotate 4
+	daily
+	missingok
+	notifempty
+	delaycompress
+	compress
+	postrotate
+		invoke-rc.d rsyslog rotate > /dev/null
+	endscript
+}
+

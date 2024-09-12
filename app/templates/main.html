@@ -1,0 +1,94 @@
+{% include 'header.tpl' %}
+
+<div class="container">
+    
+    <div class="accordion" id="accordionUL">
+        <div class="card">
+            <div class="card-header mb-0 pt-1 pb-1" id="UL">
+                <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseUL" aria-expanded="false" aria-controls="collapseUL">
+                    <h5 class="mb-0">
+                        {{ _('Excel Upload: multiple Gateway Configs') }}
+                    </h5>
+                </button>
+            </div>
+            
+            
+            <div id="collapseUL" class="collapse show" aria-labelledby="collapseUL" data-parent="#accordionUL">
+                <div class="card-body" aria-describedby="ULHelp">
+                    
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" name="upload" class="custom-file-input" id="inputGroupFile" required>
+                                    <label class="custom-file-label" for="inputGroupFile">{{ _('Choose file') }}</label>
+                                    </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit" formaction="/upload">{{ _('Upload') }}</button>
+                            </div>
+                            
+                        </div>
+                        
+                        
+                        <script type="application/javascript">
+                            $('input[type="file"]').change(function(e){
+                                                           var fileName = e.target.files[0].name;
+                                                           $('.custom-file-label').html(fileName);
+                                                           });
+                            </script>
+                        
+                    </form>
+                    
+                    
+                    <small id="ULHelp" class="form-text text-muted"> {{ _('Please browse and upload your MS Excel xlsx file ') }}</small>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="/images/SnomM9BConfigurationRXSample.xlsx" download>{{ _('Download RX Sample excel sheet ') }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="/images/SnomM9BConfigurationTXSample.xlsx" download>{{ _('Download TX Sample excel sheet ') }}</a>
+                        </li>
+                    </ul>
+                    
+                    </br>
+                    <div>
+                        <a href="/trigger">
+                            <button type="button" class="btn btn-danger" type="button">
+                                <h5 class="mb-0">
+                                    {{ _('Debug Base') }}
+                                </h5>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+        
+        
+        <div class="card" id="dataSectionUL">
+            <div class="card-header mb-0 pt-1 pb-1" id="UL">
+                <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#dataSectionUL" aria-expanded="false" aria-controls="collapseUL">
+                    <h5 class="mb-0">
+                        {{ _('Data Loaded') }}
+                    </h5>
+                </button>
+            </div>
+            <div id="collapseUL" class="collapse show" aria-labelledby="collapseUL" >
+                <div class="card-body" aria-describedby="ULHelp">
+                    <textarea readonly rows="10" style="background:none; border:none; resize:none; outline:none; width:100%;">{{data}} </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="collapseUL" class="collapse show" aria-labelledby="collapseUL" >
+        <div class="card-body" aria-describedby="ULHelp">
+            <textarea readonly rows="10" style="background:none; border:none; resize:none; outline:none; width:100%;">{{syslog_data}} </textarea>
+            
+        </div>
+    </div>
+</div>
+{% include 'footer.tpl' %}
+

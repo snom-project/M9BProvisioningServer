@@ -21,6 +21,7 @@ RUN chmod 644 /etc/logrotate.d/m9bsyslog
 WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install ./bottle-utils
 COPY app/ .
 RUN chmod 644 -R log
 

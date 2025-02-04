@@ -108,7 +108,7 @@ class SnomM9BConfiguration:
                 else:
                     val = protobuf_type(val)
 
-            except (TypeError, AttributeError) as e:
+            except (TypeError, AttributeError, ValueError) as e:
                 self.logger.debug("excel_data: Error - unknown c.name name.::%s" % e)
                 
         # take the next line of config data of setting with column name
@@ -373,7 +373,6 @@ class SnomM9BConfiguration:
         self.schema_filename = 'DB/SnomM9BProvisioningSchema.sql'
 
         db_is_new = not os.path.exists(self.db_filename)
-
         conn = sqlite3.connect(self.db_filename)
 
         if db_is_new:

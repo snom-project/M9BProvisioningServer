@@ -2,24 +2,21 @@
 # vi:si:et:sw=4:sts=4:ts=4
 # -*- coding: UTF-8 -*-
 # -*- Mode: Python -*-
-
-
 import bottle
 import os
-import multiprocessing
+#import multiprocessing
 import logging
-import random
+#import random
 
-import datetime
+#import datetime
 import time
 
 from bottle import Bottle, app, run, static_file, template, request, response, FormsDict
-from multiprocessing import Process, Queue, cpu_count
+#from multiprocessing import Process, Queue, cpu_count
 from beaker.middleware import SessionMiddleware
 
-from bottle_utils import html
+#from bottle_utils import html
 from bottle_utils.i18n import I18NPlugin
-
 from bottle_utils.i18n import lazy_ngettext as ngettext, lazy_gettext as _
 
 from bottle import jinja2_view, route
@@ -80,11 +77,11 @@ save_root_path = ".%s" % save_root
 
 tapp = bottle.default_app()
 wsgi_app = I18NPlugin(tapp,
-                      langs=LANGS,
-                      default_locale=DEFAULT_LOCALE,
-                      locale_dir=LOCALES_DIR,
-                      domain='base'
-                      )
+            langs=LANGS,
+            default_locale=DEFAULT_LOCALE,
+            locale_dir=LOCALES_DIR,
+            domain='base'
+)
 app = SessionMiddleware(wsgi_app, session_opts)
 
 from bottle import Jinja2Template
@@ -109,13 +106,24 @@ class PrettyFormsDict(FormsDict):
         return '{{\n{}\n}}'.format(args)
 ## end helper
 
-
+'''
 @bottle.hook('before_request')
 def setup_request():
     request.session = request.environ['beaker.session']
     #print('beaker_session:', request.environ['beaker.session'])
     Jinja2Template.defaults['session'] = request.session
     # check if the session is still valid / check login status
+'''
+
+'''
+@bottle.hook('before_request')
+def before_request():
+    path_info = bottle.request.environ.get('PATH_INFO')
+    query_string = bottle.request.environ.get('QUERY_STRING')
+    full_path_reconstructed = path_info + (f"?{query_string}" if query_string else "")
+    print("Full Path (reconstructed):", full_path_reconstructed)
+'''
+
 
 # absolute css path
 @bottle.get('/css/<filename>')
@@ -141,10 +149,9 @@ def send_static(filepath):
     return static_file(filepath, root=config_root_path)
 
 
-@route('/config', name='M9BDevices', no_i18n=True, method='GET')
+@bottle.route('/config', name='M9BDevices', no_i18n=True, method='GET')
 def M9BDevicesRequest():
     global xml_full
-    
 #    xml_full = conf.createFullConfigXML()
     
 
@@ -167,7 +174,7 @@ def M9BDevicesRequest():
     return xml_with_header
 
 
-@route('/config/data', name='M9BDeviceData', no_i18n=True, method='GET')
+@bottle.route('/config/data', name='M9BDeviceData', no_i18n=True, method='GET')
 def M9BDeviceDataRequest():
     global xml_full
     get_params = request.query.decode()
@@ -225,7 +232,7 @@ def M9BDeviceDataRequest():
     }
 
 '''
-@route('/data/show', name='ShowM9BDeviceData', no_i18n=False, method='GET')
+@bottle.route('/data/show', name='ShowM9BDeviceData', no_i18n=False, method='GET')
 def ShowM9BDeviceDataRequest():
     global xml_full
     get_params = request.query.decode()
@@ -289,7 +296,7 @@ def ShowM9BDeviceDataRequest():
     return  bottle.jinja2_template('show', title=_("M9BShowData"), data=out.decode(encoding="utf-8"), err=err.decode(encoding="utf-8"), ipei=ipei)
     
 
-@route('/upload', no_i18n=True, method='POST')
+@bottle.route('/upload', no_i18n=True, method='POST')
 def do_upload():
     global conf
     global xml_full
@@ -313,7 +320,7 @@ def do_upload():
     xml_full = conf.createFullConfigXML()
     xml_with_header = ET.tostring(xml_full, pretty_print=True, doctype='<?xml version="1.0" encoding="utf-8"?>', encoding='unicode')
            
-    logger.debug("XML on upload:", xml_with_header)
+    logger.debug(f"XML on upload: {xml_with_header}")
 
     logger.debug("File successfully loaded and stored '{0}'.".format(xml_with_header))
     return bottle.jinja2_template('main', title=_("M9BPS"), data=xml_with_header)
@@ -373,7 +380,6 @@ def run_trigger():
             basePort = "80"
 
     # docker change to local path
-    #syslog_file="/Users/oliver.wittig/Downloads/snom-1/Wismar/log/%s.log" % baseIP
     syslog_file="/usr/src/app/log/%s.log" % baseIP
           
     # combine again.
@@ -437,19 +443,11 @@ host = "0.0.0.0"
 global conf
 global syslog_file
 
-conf = M9BC.SnomM9BConfiguration('./SnomM9BConfigurationSetSnom.xlsx')
+conf = M9BC.SnomM9BConfiguration('./SnomM9BConfigurationSet.xlsx')
        
 xml_full = conf.createFullConfigXML()
 xml_with_header = ET.tostring(xml_full, pretty_print=True, doctype='<?xml version="1.0" encoding="utf-8"?>', encoding='unicode')
-       
-logger.debug("XML on startup:", xml_with_header)
-       
-      
-#new_element = lxml.etree.fromstring(lxml.etree.tostring(elem))
-#print('syslog TEST')
-#syslog_file='/usr/src/app/log/10.110.11.114.log'
-#syslog_file='/Users/oliver.wittig/Downloads/snom-1/Wismar/log/10.110.11.114.log'
-#get_syslog(syslog_file)
+logger.debug(f"XML on upload: {xml_with_header}")
 
 p=RSyslogParser()
 

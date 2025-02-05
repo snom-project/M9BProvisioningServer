@@ -1,7 +1,6 @@
 basic-utils
 Beaker
 bottle
-bottle-utils
 decorator
 Jinja2
 lxml
